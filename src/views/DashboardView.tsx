@@ -1,15 +1,62 @@
-import { getProjects } from "../services/ProjectService";
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { Fragment } from "react";
-import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
+import { deleteProjectByID, getProjects } from "../services/ProjectService";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
+import { Fragment, useEffect, useState } from "react";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition,
+} from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
+import { toast } from "react-toastify";
 
 export default function DashboardView() {
   const { data, isError, isLoading } = useQuery({
     queryKey: ["projects"],
     queryFn: getProjects,
   });
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const mutation = useMutation({
+    mutationFn: deleteProjectByID,
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+    onSuccess: (data: String) => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      toast.success(data);
+      navigate("/");
+    },
+  });
+
+  const handleDelete = (id: string) => {
+    if (confirm("¿Estás seguro de que deseas eliminar este proyecto?")) {
+      mutation.mutate(id);
+    }
+  };
+
+  // ---- 👇 lógica para truncar según el tamaño de pantalla
+  const [maxChars, setMaxChars] = useState(24);
+
+  useEffect(() => {
+    const updateMaxChars = () => {
+      if (window.innerWidth < 768) {
+        setMaxChars(15); // md o inferior
+      } else {
+        setMaxChars(48); // pantallas grandes
+      }
+    };
+
+    updateMaxChars();
+    window.addEventListener("resize", updateMaxChars);
+    return () => window.removeEventListener("resize", updateMaxChars);
+  }, []);
+
+  const getTruncatedName = (name: string) =>
+    name.length > maxChars ? name.slice(0, maxChars) + "…" : name;
+  // ---- 👆
 
   if (isLoading) return "Cargando...";
 
@@ -47,10 +94,10 @@ export default function DashboardView() {
                 <div className="flex min-w-0 gap-x-4">
                   <div className="min-w-0 flex-auto space-y-2">
                     <Link
-                      to={``}
+                      to={`projects/${project._id}`}
                       className="text-gray-600 cursor-pointer hover:underline text-3xl font-bold"
                     >
-                      {project.projectName}
+                      {getTruncatedName(project.projectName)}
                     </Link>
                     <p className="text-sm text-gray-400">
                       Cliente: {project.clientName}
@@ -81,7 +128,7 @@ export default function DashboardView() {
                       <MenuItems className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                         <MenuItem>
                           <Link
-                            to={``}
+                            to={`projects/${project._id}`}
                             className="block px-3 py-1 text-sm leading-6 text-gray-900"
                           >
                             Ver Proyecto
@@ -98,8 +145,8 @@ export default function DashboardView() {
                         <MenuItem>
                           <button
                             type="button"
-                            className="block px-3 py-1 text-sm leading-6 text-red-500"
-                            onClick={() => {}}
+                            className="block px-3 py-1 text-sm leading-6 text-red-500 cursor-pointer w-full text-left"
+                            onClick={() => handleDelete(project._id)}
                           >
                             Eliminar Proyecto
                           </button>

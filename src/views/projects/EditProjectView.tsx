@@ -7,7 +7,7 @@ import { Navigate, useParams } from "react-router-dom";
 export default function EditProjectView() {
   const { projectId } = useParams();
   const { data, isError, isLoading } = useQuery({
-    queryKey: ["edtiProject", projectId],
+    queryKey: ["editProject", projectId],
     queryFn: () => getProjectByID(projectId!),
     retry: false,
   });
