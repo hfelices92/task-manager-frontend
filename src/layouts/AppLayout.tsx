@@ -40,7 +40,7 @@ export default function AppLayout() {
       <ToastContainer
       pauseOnHover={false}
       pauseOnFocusLoss={false}
-      autoClose={2000}
+      autoClose={3000}
        />
     </>
   );
