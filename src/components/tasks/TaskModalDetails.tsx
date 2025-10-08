@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import { formatDate } from "../../utils/utils";
 import { statusTranslations } from "../../locales/es";
 import type { TaskStatus } from "../../types";
+import NotesPanel from "../notes/NotesPanel";
 
 export default function TaskModalDetails() {
   const navigate = useNavigate();
@@ -28,6 +29,13 @@ export default function TaskModalDetails() {
   const params = useParams();
   const { projectId } = params;
 
+  const statusStyles: { [key: string]: string } = {
+    pending: "text-amber-500",
+    onHold: "text-red-500",
+    inProgress: "text-blue-500",
+    underReview: "text-purple-500",
+    completed: "text-green-500",
+  };
   const { data, isError } = useQuery({
     queryKey: ["task", viewTaskId],
     queryFn: () => getTaskById({ projectId: projectId!, taskId: viewTaskId! }),
@@ -88,7 +96,7 @@ export default function TaskModalDetails() {
               <div className="fixed inset-0 bg-black/60" />
             </TransitionChild>
 
-            <div className="fixed inset-0 overflow-y-auto">
+            <div className="fixed inset-0 overflow-y-auto ">
               <div className="flex min-h-full items-center justify-center p-4 text-center">
                 <TransitionChild
                   as={Fragment}
@@ -99,7 +107,7 @@ export default function TaskModalDetails() {
                   leaveFrom="opacity-100 scale-100"
                   leaveTo="opacity-0 scale-95"
                 >
-                  <DialogPanel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-16">
+                  <DialogPanel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-zinc-100 text-left align-middle shadow-xl transition-all p-16">
                     <p className="text-sm text-slate-400">
                       Creada el: {formatDate(data.createdAt)}
                     </p>
@@ -108,13 +116,42 @@ export default function TaskModalDetails() {
                     </p>
                     <DialogTitle
                       as="h3"
-                      className="font-black text-4xl text-slate-600 my-5 first-letter:text-amber-500"
+                      className="font-black text-4xl text-slate-800 my-5 first-letter:text-amber-500"
                     >
                       {data.name}
                     </DialogTitle>
-                    <p className="text-lg text-slate-500 mb-2">
-                      Descripción:{data.description}
+                    <p className="text-lg text-slate-800 mb-2">
+                      Descripción:{" "}
+                      <span className="text-slate-500">{data.description}</span>
                     </p>
+                    {data.completedBy.length > 0 && (
+                      <>
+                        {" "}
+                        <p className="text-xl text-slate-800 mb-2 underline">
+                          Historial de Cambios:
+                        </p>
+                        <ul className="list-decimal">
+                          {data.completedBy.map((entry) => (
+                            <li key={entry.date} className="ml-4 mb-2">
+                              <p className="text-md text-slate-500">
+                                <span className="text-slate-800 font-bold">
+                                  {entry.user.name}
+                                </span>{" "}
+                                cambió el estado a "
+                                <span
+                                  className={`font-bold ${
+                                    statusStyles[entry.status]
+                                  }`}
+                                >
+                                  {statusTranslations[entry.status]}
+                                </span>
+                                " el {formatDate(entry.date)}
+                              </p>
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
                     <div className="my-5 space-y-3">
                       <label className="font-bold">Estado Actual:</label>
                       <select
@@ -126,17 +163,14 @@ export default function TaskModalDetails() {
                       >
                         {Object.entries(statusTranslations).map(
                           ([key, value]) => (
-                            <option
-                              key={key}
-                              value={key}
-                              selected={data.status === key}
-                            >
+                            <option key={key} value={key}>
                               {value}
                             </option>
                           )
                         )}
                       </select>
                     </div>
+                    <NotesPanel notes= {data.notes}/>
                   </DialogPanel>
                 </TransitionChild>
               </div>

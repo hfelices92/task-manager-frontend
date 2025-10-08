@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import type { Task } from "../../types";
+import type { TaskProject } from "../../types";
 import {
   Menu,
   MenuButton,
@@ -14,12 +14,14 @@ import { deleteTask } from "../../services/TaskService";
 import { toast } from "react-toastify";
 
 type TaskCardProps = {
-  task: Task;
+  task: TaskProject;
+  canEdit: boolean;
 };
 
-export default function TaskCard({ task }: TaskCardProps) {
+export default function TaskCard({ task, canEdit }: TaskCardProps) {
   const navigate = useNavigate();
   const params = useParams();
+
   const projectId = params.projectId!;
   const statusStyles: { [key: string]: string } = {
     pending: "border-l-amber-500",
@@ -41,6 +43,7 @@ export default function TaskCard({ task }: TaskCardProps) {
       toast.success("Tarea eliminada correctamente");
     },
   });
+
   return (
     <li
       className={`p-5 bg-white border border-slate-300 flex justify-between 
@@ -88,27 +91,30 @@ export default function TaskCard({ task }: TaskCardProps) {
                   Ver Tarea
                 </button>
               </MenuItem>
-              <MenuItem>
-                <button
-                  type="button"
-                  className="block px-3 py-1 text-sm leading-6 text-left w-full border-b-1 border-slate-200 text-gray-900 cursor-pointer"
-                  onClick={() =>
-                    navigate(`${location.pathname}?editTaskId=${task._id}`)
-                  }
-                >
-                  Editar Tarea
-                </button>
-              </MenuItem>
-
-              <MenuItem>
-                <button
-                  type="button"
-                  className="block px-3 py-1 text-sm leading-6 text-left w-full text-red-500 cursor-pointer"
-                  onClick={() => mutate({ projectId, taskId: task._id })}
-                >
-                  Eliminar Tarea
-                </button>
-              </MenuItem>
+              {canEdit && (
+                <>
+                  <MenuItem>
+                    <button
+                      type="button"
+                      className="block px-3 py-1 text-sm leading-6 text-left w-full border-b-1 border-slate-200 text-gray-900 cursor-pointer"
+                      onClick={() =>
+                        navigate(`${location.pathname}?editTaskId=${task._id}`)
+                      }
+                    >
+                      Editar Tarea
+                    </button>
+                  </MenuItem>
+                  <MenuItem>
+                    <button
+                      type="button"
+                      className="block px-3 py-1 text-sm leading-6 text-left w-full text-red-500 cursor-pointer"
+                      onClick={() => mutate({ projectId, taskId: task._id })}
+                    >
+                      Eliminar Tarea
+                    </button>
+                  </MenuItem>
+                </>
+              )}
             </MenuItems>
           </Transition>
         </Menu>

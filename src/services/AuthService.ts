@@ -1,12 +1,14 @@
 import api from "../lib/axios";
 import { isAxiosError } from "axios";
-import type {
-  ForgotPasswordForm,
-  RequestConfirmationCodeForm,
-  UserConfirmAccountToken,
-  UserLoginForm,
-  UserRegistrationForm,
-  NewPasswordForm,
+import {
+  type ForgotPasswordForm,
+  type RequestConfirmationCodeForm,
+  type UserConfirmAccountToken,
+  type UserLoginForm,
+  type UserRegistrationForm,
+  type NewPasswordForm,
+  userSchema,
+  type CheckPasswordForm,
 } from "../types";
 
 export async function createAcount(formData: UserRegistrationForm) {
@@ -41,8 +43,6 @@ export async function requestConfrimationCode(
     const { data } = await api.post<string>(url, email);
     return data;
   } catch (error) {
-    console.log(error);
-
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
     }
@@ -50,11 +50,12 @@ export async function requestConfrimationCode(
 }
 
 export const login = async (formData: UserLoginForm) => {
-  console.log(formData);
-
   try {
     const url = "/auth/login";
     const { data } = await api.post(url, formData);
+
+    localStorage.setItem("TM_AUTH_TOKEN", data);
+
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
@@ -94,10 +95,39 @@ export const newPassword = async ({
   formData: NewPasswordForm;
   token: UserConfirmAccountToken["token"];
 }) => {
-  console.log(formData, token);
   try {
     const url = `/auth/reset-password/${token}`;
     const { data } = await api.post<string>(url, formData);
+    return data;
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
+    }
+  }
+};
+
+export const getUser = async () => {
+  try {
+    const { data } = await api.get("/auth/user");
+    const response = userSchema.safeParse(data);
+
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error("Error al obtener los datos del usuario");
+    }
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
+    }
+  }
+};
+
+export const checkPassword = async (formData: CheckPasswordForm) => {
+  
+  try {
+    const url = "/auth/check-password";
+    const { data } = await api.post(url, { password: formData.password });
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {

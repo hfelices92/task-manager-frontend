@@ -22,7 +22,7 @@ export default function TaskForm({errors, register} : TaskFormProps) {
                     className="w-full p-3  border-gray-300 border"
                     {...register("name", {
                         required: "El nombre de la tarea es obligatorio",
-                        minLength: { value: 3, message: "El nombre de la tarea debe tener al menos 3 caracteres" }
+                       
 
                     })}
                 />

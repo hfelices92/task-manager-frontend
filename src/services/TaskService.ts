@@ -39,9 +39,11 @@ export async function getTaskById({
   try {
     const { data } = await api.get(`/projects/${projectId}/tasks/${taskId}`);
     const response = taskSchema.safeParse(data);
-    if (response.success) {
-      return response.data;
+    if (!response.success) {
+      console.error(response.error);
+      throw new Error("Invalid task data");
     }
+    return response.data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
