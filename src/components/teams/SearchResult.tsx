@@ -15,7 +15,7 @@ export default function SearchResult({ user, reset }: SearchResultProps) {
   const { mutate } = useMutation({
     mutationFn: addMemberToProject,
     onSuccess: (data) => {
-      toast.success(data.message);
+      toast.success(data);
       queryClient.invalidateQueries({ queryKey: ["projectTeam", projectId] });
       reset()
     },

@@ -1,7 +1,4 @@
-import type {
-  FieldErrors,
-  UseFormRegister,
-} from "react-hook-form";
+import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import ErrorMessage from "../ErrorMessage";
 import type { ProjectFormData } from "../../types";
 
@@ -60,8 +57,6 @@ export default function ProjectForm({ register, errors }: ProjectFormProps) {
           placeholder="Descripción del Proyecto"
           {...register("description", {
             required: "La descripción del proyecto es obligatoria",
-            minLength: { value: 10, message: "La descripción debe tener al menos 10 caracteres" },
-            
           })}
         />
 
