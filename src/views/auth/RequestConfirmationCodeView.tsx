@@ -38,7 +38,7 @@ export default function RequestConfirmationCodeView() {
       </h1>
       <p className="text-2xl font-light text-white mt-5">
         Coloca tu e-mail para recibir {""}
-        <span className=" text-fuchsia-500 font-bold"> un nuevo código</span>
+        <span className=" text-amber-500 font-bold"> un nuevo código</span>
       </p>
 
       <form
