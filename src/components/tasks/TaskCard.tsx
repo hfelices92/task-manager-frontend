@@ -37,7 +37,8 @@ export default function TaskCard({ task, canEdit }: TaskCardProps) {
   };
     const queryparams = new URLSearchParams(location.search);
   const viewTaskId = queryparams.get("viewTaskId");
-  const showMenu = viewTaskId !== null || isDragging ;
+  const newTask = queryparams.get("newTask");
+  const showMenu = viewTaskId !== null || newTask !== null || isDragging ;
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: deleteTask,
