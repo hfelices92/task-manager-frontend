@@ -6,6 +6,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteNote } from "../../services/NoteService";
 import { toast } from "react-toastify";
+import Spinner from "../Spinner";
 
 type NoteDetailProps = {
   note: Note;
@@ -38,7 +39,7 @@ export default function NoteDetail({ note }: NoteDetailProps) {
   const handleDelete = () => {
     mutate({projectId, taskId, noteId: note._id});
   };
-  if (isLoading) return <p>Cargando...</p>;
+  if (isLoading) return <Spinner />;
   if (data)
     return (
       <>

@@ -15,6 +15,7 @@ import {
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { Fragment } from "react/jsx-runtime";
 import { toast } from "react-toastify";
+import Spinner from "../../components/Spinner";
 
 export default function ProjectTeamView() {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ export default function ProjectTeamView() {
     mutate({ projectId, memberId });
   };
 
-  if (isLoading) return <p className="text-center">Cargando...</p>;
+  if (isLoading) return <Spinner />;
   if (isError)
     return <p className="text-red-500">Error: {(error as Error).message}</p>;
 

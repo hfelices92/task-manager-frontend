@@ -1,4 +1,5 @@
 import EditProjectForm from "../../components/projects/EditProjectForm";
+import Spinner from "../../components/Spinner";
 import { getProjectByID } from "../../services/ProjectService";
 import { useQuery } from "@tanstack/react-query";
 
@@ -12,7 +13,7 @@ export default function EditProjectView() {
     retry: false,
   });
 
-  if (isLoading) return "Cargando...";
+  if (isLoading) return <Spinner />;
   if (isError) return <Navigate to="/404" replace />;
 
   if (data)

@@ -9,6 +9,7 @@ import TaskModalDetails from "../../components/tasks/TaskModalDetails";
 import { useAuth } from "../../hooks/useAuth";
 import { isManager } from "../../utils/policies";
 import { useMemo } from "react";
+import Spinner from "../../components/Spinner";
 
 export default function EditProjectView() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function EditProjectView() {
     return data?.manager === user?._id;
   }, [data, user]);
 
-  if (isLoading && authLoading) return "Cargando...";
+  if (isLoading && authLoading) return <Spinner />;
   if (isError) return <Navigate to="/404" replace />;
 
   if (data && user)
