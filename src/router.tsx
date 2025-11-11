@@ -16,6 +16,7 @@ import ChangePassword from "./views/profile/ChangePassword";
 import ProfileView from "./views/profile/ProfileView";
 import ProfileLayout from "./layouts/ProfileLayout";
 import NotFoundView from "./views/404/NotFoundView";
+import DemoView from "./views/auth/DemoView";
 
 export function Router() {
   return (
@@ -47,6 +48,8 @@ export function Router() {
         <Route element={<AuthLayout />}>
           <Route path="/auth/login" element={<LoginView />} />
           <Route path="/auth/register" element={<RegisterView />} />
+          <Route path="/auth/demo" element={<DemoView />} />
+
           <Route
             path="/auth/confirm-account"
             element={<ConfirmAccountView />}
